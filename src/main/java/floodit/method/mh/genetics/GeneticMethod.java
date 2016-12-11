@@ -20,12 +20,14 @@ public class GeneticMethod {
 	private int colorsNumber;
 	private int iterations;
 	private int populationSize;
+	private boolean crossover;
 
-	public GeneticMethod(int[][] board, int colorsNumber, int iterations, int population) {
+	public GeneticMethod(int[][] board, int colorsNumber, int iterations, int population, boolean crossover) {
 		this.board = board;
 		this.colorsNumber = colorsNumber;
 		this.iterations = iterations;
 		this.populationSize = population;
+		this.crossover = crossover;
 	}
 
 	public FSolution getBestSolution() {
@@ -41,9 +43,13 @@ public class GeneticMethod {
 			}
 			double avg = population.stream().mapToDouble(Chromosome::fitness).average().orElse(0.0);
 			population.removeIf(c -> c.fitness() < avg && !surviveChance(c));
-//			for (int j = 0; j < (populationSize - population.size()); j++) {
-//				population.add(crossOver(randomChoose(population), randomChoose(population)));
-//			}
+			for (int j = 0; j < (populationSize - population.size()); j++) {
+				if (crossover) {
+					population.add(crossOver(randomChoose(population), randomChoose(population)));
+				} else {
+					population.add(randomChromosome());
+				}
+			}
 			for (int j = 0; j < (MUTATION_RATE * population.size()); j++) {
 				Chromosome c = randomChoose(population);
 				population.removeIf(c::equals);
