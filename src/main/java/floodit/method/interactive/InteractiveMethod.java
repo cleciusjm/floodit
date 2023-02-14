@@ -1,15 +1,15 @@
 package floodit.method.interactive;
 
-import java.util.Scanner;
-
 import floodit.FSolution;
 import floodit.FloodItGame;
 import floodit.utils.Utils;
 
+import java.util.Scanner;
+
 public class InteractiveMethod {
 
-	private int[][] board;
-	private int colorsNumber;
+	private final int[][] board;
+	private final int colorsNumber;
 
 	public InteractiveMethod(int[][] board, int colorsNumber) {
 		this.board = board;

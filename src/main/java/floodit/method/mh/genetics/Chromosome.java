@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Chromosome {
 
-	private List<Integer> gens;
+	private final List<Integer> gens;
 
 	public Chromosome(List<Integer> steps) {
 		this.gens = steps;

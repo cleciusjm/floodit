@@ -1,26 +1,26 @@
 package floodit.method.mh.genetics;
 
-import static java.util.stream.Collectors.toList;
+import floodit.FSolution;
+import floodit.FloodItGame;
 
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.IntStream;
 
-import floodit.FSolution;
-import floodit.FloodItGame;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
 
 public class GeneticMethod {
 	private static final double INAPT_SURVIVE_RATE = 0.2;
 	private static final double MUTATION_RATE = 0.3;
 
-	private int[][] board;
-	private int colorsNumber;
-	private int iterations;
-	private int populationSize;
-	private boolean crossover;
+	private final int[][] board;
+	private final int colorsNumber;
+	private final int iterations;
+	private final int populationSize;
+	private final boolean crossover;
 
 	public GeneticMethod(int[][] board, int colorsNumber, int iterations, int population, boolean crossover) {
 		this.board = board;
@@ -36,8 +36,7 @@ public class GeneticMethod {
 		List<Chromosome> population = IntStream.range(0, populationSize).mapToObj(i -> randomChromosome())
 				.collect(toList());
 		for (int i = 0; i < iterations; i++) {
-			Optional<Chromosome> lbest = population.stream()
-					.sorted(Comparator.comparing(Chromosome::fitness).reversed()).findFirst();
+			Optional<Chromosome> lbest = population.stream().max(comparing(Chromosome::fitness));
 			if (lbest.isPresent() && best.fitness() < lbest.get().fitness()) {
 				best = lbest.get();
 			}
@@ -64,7 +63,7 @@ public class GeneticMethod {
 		Iterator<Integer> i = c.getGens().iterator();
 		Random rand = new Random();
 		while (!game.isFinished()) {
-			int nextInt = 0;
+			int nextInt;
 			if (i.hasNext() && rand.nextBoolean()) {
 				nextInt = i.next();
 			} else {
@@ -84,7 +83,7 @@ public class GeneticMethod {
 		Iterator<Integer> i2 = c2.getGens().iterator();
 		Random rand = new Random();
 		while (!game.isFinished()) {
-			int nextInt = 0;
+			int nextInt;
 			if (i1.hasNext() && rand.nextBoolean()) {
 				nextInt = i1.next();
 			} else if (i2.hasNext()) {
@@ -100,7 +99,7 @@ public class GeneticMethod {
 	}
 
 	private Chromosome randomChoose(List<Chromosome> population) {
-		return population.get((int) Math.random() * population.size());
+		return population.get((int) (Math.random() * population.size()));
 	}
 
 	private boolean surviveChance(Chromosome c) {

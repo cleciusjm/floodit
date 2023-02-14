@@ -9,10 +9,10 @@ public class StepRoulette {
 
 	private static final int LIMIT = 100;
 	private final Random rand = new Random();
-	private List<Step> currentPossibilities;
-	private double randChooseTax;
-	private int colorsNumber;
-	private double totalPheromone;
+	private final List<Step> currentPossibilities;
+	private final double randChooseTax;
+	private final int colorsNumber;
+	private final double totalPheromone;
 
 	public StepRoulette(List<Step> currentPossibilities, double randChooseTax, int colorsNumber) {
 		this.currentPossibilities = currentPossibilities.stream().sorted(Comparator.comparing(Step::getPheromone))

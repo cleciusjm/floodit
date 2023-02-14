@@ -17,7 +17,7 @@ public class Main {
 		System.out.println(randomSolution);
 		FSolution acoSolution = new AcoMethod(board, numColors, 80, 20).getBestSolution();
 		System.out.println(acoSolution);
-		FSolution genSolution = new GeneticMethod(board, numColors, 2000, 30,false).getBestSolution();
+		FSolution genSolution = new GeneticMethod(board, numColors, 2000, 30, false).getBestSolution();
 		System.out.println(genSolution);
 		FSolution bfSolution = new BruteforceMethod(board, numColors).getBestSolution();
 		System.out.println(bfSolution);

@@ -1,24 +1,20 @@
 package floodit.method.mh.aco;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.IntStream;
-
 import floodit.FSolution;
 import floodit.FloodItGame;
+
+import java.util.*;
+import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.toList;
 
 public class AcoMethod {
 	private static final double RAND_CHOOSE_TAX = 0.1;
 	private static final double EVAPORATION_TAX = 0.4;
-	private int[][] board;
-	private int colorsNumber;
-	private int iterationLimit;
-	private int populationSize;
+	private final int[][] board;
+	private final int colorsNumber;
+	private final int iterationLimit;
+	private final int populationSize;
 
 	public AcoMethod(int[][] board, int colorsNumber, int iterationLimit, int populationSize) {
 		this.board = board;
@@ -101,8 +97,7 @@ public class AcoMethod {
 
 		@Override
 		public String toString() {
-			return new StringBuilder("Ant[f=").append(this.fitness()).append("|").append(this.steps).append("]")
-					.toString();
+			return "Ant[f=" + this.fitness() + "|" + this.steps + "]";
 		}
 	}
 }

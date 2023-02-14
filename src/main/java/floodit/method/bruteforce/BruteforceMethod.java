@@ -1,17 +1,17 @@
 package floodit.method.bruteforce;
 
+import floodit.FSolution;
+import floodit.FloodItGame;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import floodit.FSolution;
-import floodit.FloodItGame;
-
 public class BruteforceMethod {
 
-	private int[][] board;
-	private int colorsNumber;
+	private final int[][] board;
+	private final int colorsNumber;
 
 	public BruteforceMethod(int[][] board, int colorsNumber) {
 		this.board = board;
@@ -36,7 +36,7 @@ public class BruteforceMethod {
 					return clone;
 				}).filter(c -> c.getFlooded().size() > game.getFlooded().size()).map(this::testSolutions)
 				.min(Comparator.nullsLast(Comparator.comparing(List::size)));
-		return solution.isPresent() ? solution.get() : null;
+		return solution.orElse(null);
 
 	}
 }

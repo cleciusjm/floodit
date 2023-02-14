@@ -1,14 +1,14 @@
 package floodit.method.random;
 
-import java.util.Random;
-
 import floodit.FSolution;
 import floodit.FloodItGame;
 
+import java.util.Random;
+
 public class RandomMethod {
 
-	private int[][] board;
-	private int colorsNumber;
+	private final int[][] board;
+	private final int colorsNumber;
 
 	public RandomMethod(int[][] board, int colorsNumber) {
 		this.board = board;

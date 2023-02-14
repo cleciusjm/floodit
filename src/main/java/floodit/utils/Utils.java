@@ -28,9 +28,9 @@ public abstract class Utils {
 	}
 
 	public static void printBoard(PrintStream out, int[][] board) {
-		for (int i = 0; i < board.length; i++) {
-			for (int j = 0; j < board[i].length; j++) {
-				out.printf(" %d", board[i][j]);
+		for (int[] ints : board) {
+			for (int anInt : ints) {
+				out.printf(" %d", anInt);
 			}
 			out.println();
 		}

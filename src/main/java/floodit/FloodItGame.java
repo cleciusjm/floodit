@@ -1,15 +1,15 @@
 package floodit;
 
+import floodit.utils.Utils;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import floodit.utils.Utils;
-
 public class FloodItGame {
 
-	private List<Point> flooded = new ArrayList<>();
-	private List<Integer> steps = new ArrayList<>();
-	private int[][] currBoard;
+	private final List<Point> flooded = new ArrayList<>();
+	private final List<Integer> steps = new ArrayList<>();
+	private final int[][] currBoard;
 
 	private FloodItGame(FloodItGame game) {
 		this.flooded.addAll(game.flooded);
@@ -21,8 +21,6 @@ public class FloodItGame {
 		this.currBoard = Utils.arrayCopy(board);
 		Point p0 = new Point(0, 0);
 		this.flooded.add(p0);
-		if (flooded.isEmpty())
-			this.scanNeighborhood(currBoard[p0.x][p0.y], this.flooded, p0);
 	}
 
 	public List<Point> getFlooded() {
@@ -103,6 +101,7 @@ public class FloodItGame {
 		return currBoard[point.x][point.y] == color && !flooded.contains(point) && !newPoints.contains(point);
 	}
 
+	@Override
 	public FloodItGame clone() {
 		return new FloodItGame(this);
 	}
