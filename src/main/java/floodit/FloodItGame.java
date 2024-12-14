@@ -2,19 +2,23 @@ package floodit;
 
 import floodit.utils.Utils;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class FloodItGame {
 
-	private final List<Point> flooded = new ArrayList<>();
-	private final List<Integer> steps = new ArrayList<>();
+	private final List<Point> flooded = new LinkedList<>();
+	private final List<Integer> steps = new LinkedList<>();
 	private final int[][] currBoard;
 
 	private FloodItGame(FloodItGame game) {
 		this.flooded.addAll(game.flooded);
 		this.steps.addAll(game.steps);
 		this.currBoard = Utils.arrayCopy(game.currBoard);
+	}
+
+	public FloodItGame(Board board) {
+		this(board.board());
 	}
 
 	public FloodItGame(int[][] board) {
@@ -27,10 +31,6 @@ public class FloodItGame {
 		return flooded;
 	}
 
-	public int[][] getBoard() {
-		return currBoard;
-	}
-
 	public List<Integer> getSteps() {
 		return steps;
 	}
@@ -39,19 +39,18 @@ public class FloodItGame {
 		return this.flooded.size() == currBoard.length * currBoard[0].length;
 	}
 
-	public int[][] addStep(int color) {
+	public void addStep(int color) {
 		int lastColor = getCurrentColor();
 		if (lastColor == color) {
 			throw new IllegalArgumentException("Passo repetido");
 		}
 		steps.add(color);
-		List<Point> newPoints = new ArrayList<>();
+		List<Point> newPoints = new LinkedList<>();
 		for (Point p : flooded) {
 			currBoard[p.x][p.y] = color;
 			scanNeighborhood(color, newPoints, p);
 		}
 		this.flooded.addAll(newPoints);
-		return currBoard;
 	}
 
 	public int getCurrentColor() {
@@ -117,8 +116,7 @@ public class FloodItGame {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof Point) {
-				Point o = (Point) obj;
+			if (obj instanceof Point o) {
 				return this.x == o.x && this.y == o.y;
 			}
 			return false;

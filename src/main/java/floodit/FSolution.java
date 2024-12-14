@@ -5,34 +5,18 @@ import java.util.List;
 
 import static java.lang.String.format;
 
-public class FSolution implements Comparable<FSolution> {
-
-	private final Class<?> method;
-	private final List<Integer> steps;
-	private final long start;
-	private final long end;
+public record FSolution(
+	Class<?> method,
+	List<Integer> steps,
+	long start,
+	long end
+) implements Comparable<FSolution> {
 
 	public FSolution(Class<?> method, List<Integer> steps, long start, long end) {
 		this.method = method;
 		this.steps = steps == null ? Collections.emptyList() : steps;
 		this.start = start;
 		this.end = end;
-	}
-
-	public Class<?> getMethod() {
-		return method;
-	}
-
-	public List<Integer> getSteps() {
-		return steps;
-	}
-
-	public long getStart() {
-		return start;
-	}
-
-	public long getEnd() {
-		return end;
 	}
 
 	public long getTime() {

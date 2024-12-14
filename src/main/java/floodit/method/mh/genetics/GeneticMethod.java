@@ -1,9 +1,9 @@
 package floodit.method.mh.genetics;
 
+import floodit.Board;
 import floodit.FSolution;
-import floodit.FloodItGame;
+import floodit.method.OptimizationMethod;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -12,90 +12,67 @@ import java.util.stream.IntStream;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
-public class GeneticMethod {
-	private static final double INAPT_SURVIVE_RATE = 0.2;
-	private static final double MUTATION_RATE = 0.3;
+public class GeneticMethod implements OptimizationMethod {
+	private static final double INAPT_SURVIVE_RATE = 0.1;
+	private static final double MUTATION_RATE = 0.2;
 
-	private final int[][] board;
-	private final int colorsNumber;
+	private final Board board;
 	private final int iterations;
 	private final int populationSize;
 	private final boolean crossover;
+	private final Random rand = new Random();
 
-	public GeneticMethod(int[][] board, int colorsNumber, int iterations, int population, boolean crossover) {
+	public GeneticMethod(Board board, int iterations, int population, boolean crossover) {
 		this.board = board;
-		this.colorsNumber = colorsNumber;
 		this.iterations = iterations;
 		this.populationSize = population;
 		this.crossover = crossover;
 	}
 
+	@Override
 	public FSolution getBestSolution() {
 		long start = System.currentTimeMillis();
-		Chromosome best = randomChromosome();
-		List<Chromosome> population = IntStream.range(0, populationSize).mapToObj(i -> randomChromosome())
-				.collect(toList());
+		Chromosome best = Chromosome.random(board);
+		List<Chromosome> population = IntStream.range(0, populationSize)
+			.parallel()
+			.mapToObj(i -> Chromosome.random(board))
+			.collect(toList());
 		for (int i = 0; i < iterations; i++) {
-			Optional<Chromosome> lbest = population.stream().max(comparing(Chromosome::fitness));
-			if (lbest.isPresent() && best.fitness() < lbest.get().fitness()) {
+			Optional<Chromosome> lbest = population.stream().max(comparing(Chromosome::getFitness));
+
+			if (lbest.isPresent() && best.getFitness() < lbest.get().getFitness()) {
 				best = lbest.get();
 			}
-			double avg = population.stream().mapToDouble(Chromosome::fitness).average().orElse(0.0);
-			population.removeIf(c -> c.fitness() < avg && !surviveChance(c));
-			for (int j = 0; j < (populationSize - population.size()); j++) {
-				if (crossover) {
-					population.add(crossOver(randomChoose(population), randomChoose(population)));
-				} else {
-					population.add(randomChromosome());
+
+			double avg = population.stream().mapToDouble(Chromosome::getFitness).average().orElse(0.0);
+
+			for (int j = 0; j < population.size(); j++) {
+				var chromosome = population.get(j);
+				if (chromosome.getFitness() < avg && !surviveChance(chromosome)) {
+					if (crossover && rand.nextBoolean()) {
+						var p1 = randomChoose(population, avg);
+						var p2 = randomChoose(population, avg);
+						population.set(j, p1.crossOver(p2, board));
+					} else {
+						population.set(j, Chromosome.random(board));
+					}
 				}
 			}
+
 			for (int j = 0; j < (MUTATION_RATE * population.size()); j++) {
 				Chromosome c = randomChoose(population);
-				population.removeIf(c::equals);
-				mutate(c);
+				population.set(population.indexOf(c), c.mutate(board));
 			}
 		}
 		return new FSolution(this.getClass(), best.getGens(), start, System.currentTimeMillis());
 	}
 
-	private void mutate(Chromosome c) {
-		FloodItGame game = new FloodItGame(board);
-		Iterator<Integer> i = c.getGens().iterator();
-		Random rand = new Random();
-		while (!game.isFinished()) {
-			int nextInt;
-			if (i.hasNext() && rand.nextBoolean()) {
-				nextInt = i.next();
-			} else {
-				nextInt = rand.nextInt(colorsNumber);
-			}
-			if (nextInt != game.getCurrentColor()) {
-				game.addStep(nextInt);
-			}
-		}
-		c.getGens().clear();
-		c.getGens().addAll(game.getSteps());
-	}
-
-	private Chromosome crossOver(Chromosome c1, Chromosome c2) {
-		FloodItGame game = new FloodItGame(board);
-		Iterator<Integer> i1 = c1.getGens().iterator();
-		Iterator<Integer> i2 = c2.getGens().iterator();
-		Random rand = new Random();
-		while (!game.isFinished()) {
-			int nextInt;
-			if (i1.hasNext() && rand.nextBoolean()) {
-				nextInt = i1.next();
-			} else if (i2.hasNext()) {
-				nextInt = i2.next();
-			} else {
-				nextInt = rand.nextInt(colorsNumber);
-			}
-			if (nextInt != game.getCurrentColor()) {
-				game.addStep(nextInt);
-			}
-		}
-		return new Chromosome(game.getSteps());
+	private Chromosome randomChoose(List<Chromosome> population, double avg) {
+		Chromosome choosed;
+		do {
+			choosed = randomChoose(population);
+		} while (choosed.getFitness() < avg);
+		return choosed;
 	}
 
 	private Chromosome randomChoose(List<Chromosome> population) {
@@ -106,15 +83,5 @@ public class GeneticMethod {
 		return Math.random() < INAPT_SURVIVE_RATE;
 	}
 
-	private Chromosome randomChromosome() {
-		FloodItGame game = new FloodItGame(board);
-		Random rand = new Random();
-		while (!game.isFinished()) {
-			int nextInt = rand.nextInt(colorsNumber);
-			if (nextInt != game.getCurrentColor()) {
-				game.addStep(nextInt);
-			}
-		}
-		return new Chromosome(game.getSteps());
-	}
+
 }

@@ -1,26 +1,27 @@
 package floodit.method.random;
 
+import floodit.Board;
 import floodit.FSolution;
 import floodit.FloodItGame;
+import floodit.method.OptimizationMethod;
 
 import java.util.Random;
 
-public class RandomMethod {
+public class RandomMethod implements OptimizationMethod {
 
-	private final int[][] board;
-	private final int colorsNumber;
+	private final Board board;
 
-	public RandomMethod(int[][] board, int colorsNumber) {
+	public RandomMethod(Board board) {
 		this.board = board;
-		this.colorsNumber = colorsNumber;
 	}
 
+	@Override
 	public FSolution getBestSolution() {
 		long start = System.currentTimeMillis();
 		FloodItGame game = new FloodItGame(board);
 		Random rand = new Random();
 		while (!game.isFinished()) {
-			int nextInt = rand.nextInt(colorsNumber);
+			int nextInt = rand.nextInt(board.colorsCount());
 			try {
 				game.addStep(nextInt);
 			} catch (IllegalArgumentException e) {

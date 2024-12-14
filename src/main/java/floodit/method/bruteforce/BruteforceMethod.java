@@ -1,23 +1,26 @@
 package floodit.method.bruteforce;
 
+import floodit.Board;
 import floodit.FSolution;
 import floodit.FloodItGame;
+import floodit.method.OptimizationMethod;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-public class BruteforceMethod {
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.nullsLast;
 
-	private final int[][] board;
-	private final int colorsNumber;
+public class BruteforceMethod implements OptimizationMethod {
 
-	public BruteforceMethod(int[][] board, int colorsNumber) {
+	private final Board board;
+
+	public BruteforceMethod(Board board) {
 		this.board = board;
-		this.colorsNumber = colorsNumber;
 	}
 
+	@Override
 	public FSolution getBestSolution() {
 		long start = System.currentTimeMillis();
 		FloodItGame game = new FloodItGame(board);
@@ -29,13 +32,16 @@ public class BruteforceMethod {
 		if (game.isFinished()) {
 			return game.getSteps();
 		}
-		Optional<List<Integer>> solution = IntStream.range(0, colorsNumber).parallel()
-				.filter(i -> game.getCurrentColor() != i).mapToObj(i -> {
-					FloodItGame clone = game.clone();
-					clone.addStep(i);
-					return clone;
-				}).filter(c -> c.getFlooded().size() > game.getFlooded().size()).map(this::testSolutions)
-				.min(Comparator.nullsLast(Comparator.comparing(List::size)));
+		Optional<List<Integer>> solution = IntStream.range(0, board.colorsCount()).parallel()
+			.filter(i -> game.getCurrentColor() != i).mapToObj(i -> {
+				FloodItGame clone = game.clone();
+				clone.addStep(i);
+				return clone;
+			})
+			.filter(c -> c.getFlooded().size() > game.getFlooded().size())
+			.map(this::testSolutions)
+			.min(nullsLast(comparing(List::size)));
+
 		return solution.orElse(null);
 
 	}

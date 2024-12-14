@@ -1,6 +1,6 @@
 package floodit.method.mh.aco;
 
-class Step {
+public class Step {
 	private final int currentNumber;
 	private final int currentColor;
 	private double pheromone = 0.0;
@@ -28,16 +28,6 @@ class Step {
 		return destColor;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof Step) {
-			Step o = (Step) obj;
-			return this.currentColor == o.currentColor && this.currentNumber == o.currentNumber
-					&& this.destColor == o.destColor;
-		}
-		return false;
-	}
-
 	public void incrementPheromone(double fitness) {
 		this.pheromone += fitness;
 	}
@@ -46,5 +36,15 @@ class Step {
 		if (tax > 1)
 			throw new IllegalArgumentException();
 		this.pheromone *= (1 - tax);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Step o) {
+			return this.currentColor == o.currentColor
+				&& this.currentNumber == o.currentNumber
+				&& this.destColor == o.destColor;
+		}
+		return false;
 	}
 }

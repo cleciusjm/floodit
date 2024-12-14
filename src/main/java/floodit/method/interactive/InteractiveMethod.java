@@ -1,33 +1,33 @@
 package floodit.method.interactive;
 
+import floodit.Board;
 import floodit.FSolution;
 import floodit.FloodItGame;
-import floodit.utils.Utils;
+import floodit.method.OptimizationMethod;
 
 import java.util.Scanner;
 
-public class InteractiveMethod {
+public class InteractiveMethod implements OptimizationMethod {
 
-	private final int[][] board;
-	private final int colorsNumber;
+	private final Board board;
 
-	public InteractiveMethod(int[][] board, int colorsNumber) {
+	public InteractiveMethod(Board board) {
 		this.board = board;
-		this.colorsNumber = colorsNumber;
 	}
 
+	@Override
 	public FSolution getBestSolution() {
 		long start = System.currentTimeMillis();
 		FloodItGame game = new FloodItGame(board);
 		try (Scanner reader = new Scanner(System.in)) {
 			System.out.println("Iniciando jogo (para sair, pressione qualquer tecla)");
 			while (!game.isFinished()) {
-				Utils.printBoard(System.out, game.getBoard());
+				board.print(System.out);
 				System.out.print("Informe o passo: ");
 				int nextInt = reader.nextInt();
 				System.out.println();
 				try {
-					if (nextInt >= colorsNumber) {
+					if (nextInt >= board.colorsCount()) {
 						throw new IllegalArgumentException("Passo inválido");
 					}
 					game.addStep(nextInt);

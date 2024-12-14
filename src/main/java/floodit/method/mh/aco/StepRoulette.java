@@ -3,7 +3,6 @@ package floodit.method.mh.aco;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class StepRoulette {
 
@@ -16,7 +15,7 @@ public class StepRoulette {
 
 	public StepRoulette(List<Step> currentPossibilities, double randChooseTax, int colorsNumber) {
 		this.currentPossibilities = currentPossibilities.stream().sorted(Comparator.comparing(Step::getPheromone))
-				.collect(Collectors.toList());
+			.toList();
 		this.totalPheromone = currentPossibilities.stream().mapToDouble(Step::getPheromone).sum();
 		this.randChooseTax = randChooseTax;
 		this.colorsNumber = colorsNumber;
